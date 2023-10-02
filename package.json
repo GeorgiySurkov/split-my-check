@@ -2,15 +2,13 @@
   "name": "split-my-check",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://georgiysurkov.github.io/split-my-check",
+  "homepage": "https://split-my-check.pages.dev/",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-	"predeploy": "yarn build --base /split-my-check/",
-	"deploy": "gh-pages -d dist"
+    "preview": "vite preview"
   },
   "dependencies": {
     "react": "^18.2.0",
@@ -28,6 +26,7 @@
     "eslint-plugin-react-refresh": "^0.4.3",
     "gh-pages": "6.0.0",
     "typescript": "^5.0.2",
-    "vite": "^4.4.5"
+    "vite": "^4.4.5",
+    "wrangler": "3.10.1"
   }
 }
