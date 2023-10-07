@@ -6,7 +6,7 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 # bind localhost only to prevent any external access
 WEB_SERVER_HOST = os.getenv("WEB_SERVER_HOST", "0.0.0.0")
 # Port for incoming request from reverse proxy. Should be any available port
-WEB_SERVER_PORT = os.getenv("WEB_SERVER_PORT", 8080)
+WEB_SERVER_PORT = int(os.getenv("WEB_SERVER_PORT", "8080"))
 
 # Path to webhook route, on which Telegram will send requests
 WEBHOOK_PATH = os.getenv("WEBHOOK_PATH", "/webhook")

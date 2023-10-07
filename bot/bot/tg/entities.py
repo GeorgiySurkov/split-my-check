@@ -1,8 +1,9 @@
 import typing as t
-from pydantic import BaseModel
-
+import json
 from datetime import datetime
 from enum import StrEnum, auto
+
+from pydantic import BaseModel, field_validator
 
 
 class WebAppChatType(StrEnum):
@@ -23,7 +24,7 @@ class WebAppUser(BaseModel):
     is_premium: t.Literal[True] | None = None
     added_to_attachment_menu: t.Literal[True] | None = None
     allows_write_to_pm: t.Literal[True] | None = None
-    photo_url: str | None
+    photo_url: str | None = None
 
 
 class WebAppChat(BaseModel):
@@ -44,3 +45,11 @@ class WebAppInitData(BaseModel):
     chat_type: WebAppChatType | None = None
     start_param: str | None = None
     can_send_after: int | None = None
+
+    @field_validator("user", "receiver", "chat", mode="before")
+    @classmethod
+    def validate_complex_fields(cls, v):
+        try:
+            return json.loads(v)
+        except json.JSONDecodeError:
+            return v
