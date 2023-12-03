@@ -14,6 +14,7 @@
 # Данные
 [Посмотреть](https://dbdesigner.page.link/bHqfgk7oNPiskCpj7) схему данных в dbdesigner. Там же обозначены ограничения для каждого элемента данных.
 
+![Схема базы данных](https://media.githubusercontent.com/media/GeorgiySurkov/split-my-check/master/assets/db-schema.png)
 
 ## Общие ограничения целостности
 В ExpenseParticipant всегда одно поле из fraction и explicit_part должно быть не NULL.
