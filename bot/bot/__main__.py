@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 async def on_startup(bot: Bot) -> None:
     # If you have a self-signed SSL certificate, then you will need to send a public
     # certificate to Telegram
-    await bot.set_webhook(f"{settings.BASE_WEBHOOK_URL}{settings.WEBHOOK_PATH}", secret_token=settings.WEBHOOK_SECRET)
+    await bot.set_webhook(f"{settings.BASE_URL}{settings.WEBHOOK_PATH}", secret_token=settings.WEBHOOK_SECRET)
 
 
 def main() -> None:
