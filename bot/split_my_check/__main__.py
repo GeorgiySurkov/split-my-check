@@ -8,7 +8,9 @@ from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_applicati
 from aiohttp import web
 from aiohttp_pydantic import oas
 
-from . import settings, bot_router, api_routes
+from . import settings
+from .api import api_router
+from .tg.bot import bot_router
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +47,7 @@ def main() -> None:
     # Register webhook handler on application
     webhook_requests_handler.register(app, path=settings.WEBHOOK_PATH)
     # Register API routes
-    app.add_routes(api_routes)
+    app.add_routes(api_router)
     oas.setup(app, url_prefix="/docs")
 
     # Mount dispatcher startup and shutdown hooks to aiohttp application
