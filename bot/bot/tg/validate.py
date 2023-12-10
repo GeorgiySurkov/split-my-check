@@ -1,9 +1,6 @@
-from collections.abc import Mapping, MutableMapping
-from copy import copy
+from typing import Any
 import hashlib
 import hmac
-import json
-from urllib.parse import unquote
 
 from multidict import MultiDictProxy
 
@@ -13,9 +10,9 @@ from .entities import WebAppInitData
 
 
 def validate_init_data(
-        init_data: MultiDictProxy[str],
-        token: str = settings.BOT_TOKEN,
-        constant_str="WebAppData"
+    init_data: MultiDictProxy[str, Any],
+    token: str = settings.BOT_TOKEN,
+    constant_str: str = "WebAppData"
 ) -> WebAppInitData:
     """
     Validates the data received from the Telegram web app, using the

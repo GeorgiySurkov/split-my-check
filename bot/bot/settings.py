@@ -1,5 +1,6 @@
 import os
 
+ENV = os.getenv("ENV", "prod")
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 # Webserver settings

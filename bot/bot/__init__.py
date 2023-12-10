@@ -34,6 +34,13 @@ async def handle_inline_query(q: types.InlineQuery) -> None:
     )
 
 
+# echo incoming message to bot
+@bot_router.message()
+async def handle_message(msg: types.Message) -> None:
+    logger.info(f"Incoming message: {msg.text}")
+    await msg.answer(msg.text)
+
+
 @api_routes.get("/validate_init_data")
 async def validate_init_data_handler(req: web.Request) -> web.Response:
     init_data = validate_init_data(req.query)

@@ -1,6 +1,7 @@
 import logging
 import sys
 
+import aiohttp_cors
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
@@ -49,6 +50,19 @@ def main() -> None:
 
     # Mount dispatcher startup and shutdown hooks to aiohttp application
     setup_application(app, dp, bot=bot)
+
+    if settings.ENV == "local":
+        cors = aiohttp_cors.setup(app, defaults={
+            "*": aiohttp_cors.ResourceOptions(
+                allow_credentials=True,
+                expose_headers="*",
+                allow_headers="*",
+            )
+        })
+
+        # Configure CORS on all routes.
+        for route in list(app.router.routes()):
+            cors.add(route)
 
     # And finally start webserver
     logger.info(f"Starting web server: {settings.WEB_SERVER_HOST=}, {settings.WEB_SERVER_PORT=}")
