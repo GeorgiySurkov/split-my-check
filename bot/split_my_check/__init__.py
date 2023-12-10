@@ -44,5 +44,4 @@ async def handle_message(msg: types.Message) -> None:
 @api_routes.get("/validate_init_data")
 async def validate_init_data_handler(req: web.Request) -> web.Response:
     init_data = validate_init_data(req.query)
-    print(req.query)
     return web.json_response(text=init_data.model_dump_json())

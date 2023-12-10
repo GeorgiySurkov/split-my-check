@@ -10,7 +10,7 @@ from .entities import WebAppInitData
 
 
 def validate_init_data(
-    init_data: MultiDictProxy[str, Any],
+    init_data: MultiDictProxy[str],
     token: str = settings.BOT_TOKEN,
     constant_str: str = "WebAppData"
 ) -> WebAppInitData:
@@ -19,6 +19,10 @@ def validate_init_data(
     method documented here:
     https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app
     """
+    if len(init_data) > 10:
+        # The data is not from Telegram, so we won't calculate hash.
+        raise InitDataValidationError()
+
     init_data_without_hash = init_data.copy()
     try:
         hash_value = init_data_without_hash.pop("hash")
