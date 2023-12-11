@@ -16,3 +16,9 @@ WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET", "very-secret-string")
 # Base URL for webhook will be used to generate webhook URL for Telegram,
 # in this example it is used public DNS with HTTPS support
 BASE_URL = os.getenv("BASE_WEBHOOK_URL")
+
+
+POSTGRES_DSN = os.getenv(
+    "POSTGRES_DSN",
+    "postgresql+asyncpg://split_my_check:123@localhost:5432/split_my_check",
+)
