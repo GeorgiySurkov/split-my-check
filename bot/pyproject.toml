@@ -1,0 +1,6 @@
+[project]
+requires-python = ">=3.11"
+name = "split_my_check"
+
+[tool.pip-tools]
+generate-hashes = true

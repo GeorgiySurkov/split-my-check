@@ -19,7 +19,7 @@ async def handle_inline_query(q: types.InlineQuery) -> None:
                 description="Будет отправлено сообщение, по которому можно будет зайти в нужный трикаунт",
                 input_message_content=types.InputTextMessageContent(
                     message_text="А вот и трикаунт: https://t.me/splitmycheckbot/app?startapp=gr123",
-                )
+                ),
             )
         ],
         cache_time=0,
