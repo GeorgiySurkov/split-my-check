@@ -1,18 +1,17 @@
 """init
 
-Revision ID: 1e27761d4631
+Revision ID: 9dbf85ae9797
 Revises: 
-Create Date: 2023-12-11 23:17:58.409461
+Create Date: 2023-12-14 01:58:05.662179
 
 """
 from typing import Sequence, Union
 
-from alembic import op
 import sqlalchemy as sa
-
+from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "1e27761d4631"
+revision: str = "9dbf85ae9797"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -30,7 +29,7 @@ def upgrade() -> None:
         "expense_group",
         sa.Column("id", sa.String(length=20), nullable=False),
         sa.Column("owner_id", sa.Uuid(), nullable=False),
-        sa.Column("name", sa.String(length=64), nullable=False),
+        sa.Column("name", sa.String(length=64), nullable=True),
         sa.Column("created_at", sa.TIMESTAMP(timezone=True), nullable=False),
         sa.Column("updated_at", sa.TIMESTAMP(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(
@@ -45,9 +44,13 @@ def upgrade() -> None:
         sa.Column("user_id", sa.Uuid(), nullable=False),
         sa.Column("tg_id", sa.BigInteger(), nullable=False),
         sa.Column("username", sa.String(length=32), nullable=False),
-        sa.Column("created_at", sa.TIMESTAMP(timezone=True), nullable=False),
         sa.Column("first_name", sa.String(length=64), nullable=False),
         sa.Column("last_name", sa.String(length=64), nullable=False),
+        sa.Column("language_code", sa.String(length=35), nullable=False),
+        sa.Column("is_bot", sa.Boolean(), nullable=False),
+        sa.Column("is_premium", sa.Boolean(), nullable=False),
+        sa.Column("created_at", sa.TIMESTAMP(timezone=True), nullable=False),
+        sa.Column("updated_at", sa.TIMESTAMP(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(
             ["user_id"],
             ["user.id"],
@@ -59,7 +62,7 @@ def upgrade() -> None:
         op.f("ix_telegram_user_tg_id"), "telegram_user", ["tg_id"], unique=True
     )
     op.create_index(
-        op.f("ix_telegram_user_username"), "telegram_user", ["username"], unique=True
+        op.f("ix_telegram_user_username"), "telegram_user", ["username"], unique=False
     )
     op.create_table(
         "expense",
