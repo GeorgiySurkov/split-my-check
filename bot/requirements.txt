@@ -451,6 +451,10 @@ multidict==6.0.4 \
     # via
     #   aiohttp
     #   yarl
+nanoid==2.0.0 \
+    --hash=sha256:5a80cad5e9c6e9ae3a41fa2fb34ae189f7cb420b2a5d8f82bd9d23466e4efa68 \
+    --hash=sha256:90aefa650e328cffb0893bbd4c236cfd44c48bc1f2d0b525ecc53c3187b653bb
+    # via -r requirements.in
 pydantic==2.5.2 \
     --hash=sha256:80c50fb8e3dcecfddae1adbcc00ec5822918490c99ab31f6cf6140ca1c1429f0 \
     --hash=sha256:ff177ba64c6faf73d7afa2e8cad38fd456c0dbe01c9954e71038001cd15a6edd
