@@ -1,18 +1,17 @@
-from typing import Any
 import hashlib
 import hmac
 
 from multidict import MultiDictProxy
 
-from .. import settings
-from ..exc import InitDataValidationError
 from .entities import WebAppInitData
+from ..exc import InitDataValidationError
+from ..settings import settings
 
 
 def validate_init_data(
     init_data: MultiDictProxy[str],
-    token: str = settings.BOT_TOKEN,
-    constant_str: str = "WebAppData"
+    token: str = settings.bot_token,
+    constant_str: str = "WebAppData",
 ) -> WebAppInitData:
     """
     Validates the data received from the Telegram web app, using the
@@ -36,15 +35,9 @@ def validate_init_data(
     data_check_string = "\n".join(f"{item[0]}={item[1]}" for item in init_data_items)
 
     secret_key = hmac.new(
-        constant_str.encode(),
-        token.encode(),
-        hashlib.sha256
+        constant_str.encode(), token.encode(), hashlib.sha256
     ).digest()
-    data_check = hmac.new(
-        secret_key,
-        data_check_string.encode(),
-        hashlib.sha256
-    )
+    data_check = hmac.new(secret_key, data_check_string.encode(), hashlib.sha256)
     if data_check.hexdigest() != hash_value:
         # The data is not from Telegram, so it can't be trusted.
         raise InitDataValidationError()

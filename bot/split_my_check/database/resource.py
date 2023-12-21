@@ -16,9 +16,9 @@ logger = logging.getLogger(__name__)
 
 
 class DatabaseResource:
-    def __init__(self):
+    def __init__(self, settings: settings.Settings):
         self.engine = create_async_engine(
-            settings.POSTGRES_DSN,
+            settings.postgres_dsn,
             echo=True,
         )
         self._new_session = async_sessionmaker(

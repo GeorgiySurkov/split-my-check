@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel, Field
 from sqlalchemy import insert
 
@@ -8,9 +10,15 @@ from split_my_check.database.resource import DatabaseResource
 class CreateExpenseGroupInput(BaseModel):
     id: str = Field(..., max_length=20)
     name: str = Field(..., max_length=64)
+    owner_id: str
 
 
-CreateExpenseGroupOutput = None
+class CreateExpenseGroupOutput(BaseModel):
+    id: str
+    name: str
+    owner_id: str
+    created_at: datetime
+    updated_at: datetime
 
 
 class CreateExpenseGroupUseCase:
@@ -19,4 +27,7 @@ class CreateExpenseGroupUseCase:
 
     async def execute(self, inp: CreateExpenseGroupInput) -> CreateExpenseGroupOutput:
         async with self.db.session.begin():
-            await self.db.session.execute(insert(ExpenseGroup).values(inp.model_dump()))
+            expense_group = await self.db.session.scalars(
+                insert(ExpenseGroup).values(inp.model_dump()).returning(ExpenseGroup)
+            )
+        return CreateExpenseGroupOutput.model_validate(expense_group)

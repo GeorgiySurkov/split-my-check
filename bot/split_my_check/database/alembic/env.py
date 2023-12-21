@@ -1,13 +1,12 @@
 import asyncio as aio
 from logging.config import fileConfig
 
-from sqlalchemy import pool
 from alembic import context
+from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from split_my_check.database.orm import Base
-from split_my_check import settings
-
+from split_my_check.settings import settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -20,7 +19,7 @@ if config.config_file_name is not None:
 
 target_metadata = Base.metadata
 
-config.set_main_option("sqlalchemy.url", settings.POSTGRES_DSN)
+config.set_main_option("sqlalchemy.url", settings.postgres_dsn)
 
 
 def run_migrations_offline() -> None:

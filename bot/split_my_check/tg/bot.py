@@ -39,7 +39,7 @@ async def handle_inline_query(q: types.InlineQuery) -> None:
                 title="Создать трикаунт",
                 description=f'Будет отправлено сообщение с ссылкой на новую группу расходов "{q.query}"',
                 input_message_content=types.InputTextMessageContent(
-                    message_text=f"А вот и трикаунт: https://t.me/splitmycheckbot/app?startapp={prefixed_expense_group_id}",
+                    message_text=f'А вот и новая группа расходов "{q.query}": https://t.me/splitmycheckbot/app?startapp={prefixed_expense_group_id}',
                 ),
             )
         ],

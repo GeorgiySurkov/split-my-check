@@ -8,67 +8,79 @@ from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_applicati
 from aiohttp import web
 from aiohttp_pydantic import oas
 
-from . import settings
 from .api import api_router
+from .database.resource import DatabaseResource
+from .di import wire_container
+from .settings import settings
 from .tg.bot import bot_router
 
 logger = logging.getLogger(__name__)
 
 
-async def on_startup(bot: Bot) -> None:
-    # If you have a self-signed SSL certificate, then you will need to send a public
-    # certificate to Telegram
-    await bot.set_webhook(f"{settings.BASE_URL}{settings.WEBHOOK_PATH}", secret_token=settings.WEBHOOK_SECRET)
+@web.middleware
+async def db_context_middleware(request: web.Request, handler) -> web.Response:
+    db = request.app["container"].resolve(DatabaseResource)
+    async with db.context():
+        return await handler(request)
+
+
+async def on_bot_startup(bot: Bot) -> None:
+    await bot.set_webhook(
+        f"{settings.base_url}{settings.webhook_path}",
+        secret_token=settings.webhook_secret,
+    )
+
+
+async def di_cleanup(app: web.Application) -> None:
+    async with wire_container(settings) as container:
+        app["split_my_check_container"] = container
+        yield
 
 
 def main() -> None:
-    # Dispatcher is a root router
-    dp = Dispatcher()
-    # ... and all other routers should be attached to Dispatcher
-    dp.include_router(bot_router)
+    app = web.Application(middlewares=[db_context_middleware])
+    app.cleanup_ctx.append(di_cleanup)
 
-    # Register startup hook to initialize webhook
-    dp.startup.register(on_startup)
-
-    # Initialize Bot instance with a default parse mode which will be passed to all API calls
-    bot = Bot(settings.BOT_TOKEN, parse_mode=ParseMode.HTML)
-
-    # Create aiohttp.web.Application instance
-    app = web.Application()
-
-    # Create an instance of request handler,
-    # aiogram has few implementations for different cases of usage
-    # In this example we use SimpleRequestHandler which is designed to handle simple cases
-    webhook_requests_handler = SimpleRequestHandler(
-        dispatcher=dp,
-        bot=bot,
-        secret_token=settings.WEBHOOK_SECRET,
-    )
-    # Register webhook handler on application
-    webhook_requests_handler.register(app, path=settings.WEBHOOK_PATH)
-    # Register API routes
     app.add_routes(api_router)
     oas.setup(app, url_prefix="/docs")
 
-    # Mount dispatcher startup and shutdown hooks to aiohttp application
+    # aiogram stuff
+    dp = Dispatcher()
+    dp.include_router(bot_router)
+    dp.startup.register(on_bot_startup)
+    bot = Bot(settings.bot_token, parse_mode=ParseMode.HTML)
+
+    webhook_requests_handler = SimpleRequestHandler(
+        dispatcher=dp,
+        bot=bot,
+        secret_token=settings.webhook_secret,
+    )
+    webhook_requests_handler.register(app, path=settings.webhook_path)
+
     setup_application(app, dp, bot=bot)
 
-    if settings.ENV == "local":
-        cors = aiohttp_cors.setup(app, defaults={
-            "*": aiohttp_cors.ResourceOptions(
-                allow_credentials=True,
-                expose_headers="*",
-                allow_headers="*",
-            )
-        })
+    # CORS for local development
+    if settings.env == "local":
+        cors = aiohttp_cors.setup(
+            app,
+            defaults={
+                "*": aiohttp_cors.ResourceOptions(
+                    allow_credentials=True,
+                    expose_headers="*",
+                    allow_headers="*",
+                )
+            },
+        )
 
         # Configure CORS on all routes.
         for route in list(app.router.routes()):
             cors.add(route)
 
     # And finally start webserver
-    logger.info(f"Starting web server: {settings.WEB_SERVER_HOST=}, {settings.WEB_SERVER_PORT=}")
-    web.run_app(app, host=settings.WEB_SERVER_HOST, port=settings.WEB_SERVER_PORT)
+    logger.info(
+        f"Starting web server: {settings.web_server_host=}, {settings.web_server_port=}"
+    )
+    web.run_app(app, host=settings.web_server_host, port=settings.web_server_port)
 
 
 if __name__ == "__main__":
