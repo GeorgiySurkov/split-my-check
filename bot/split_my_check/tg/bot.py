@@ -3,6 +3,7 @@ import logging
 from aiogram import Router, types
 
 from split_my_check.di import get_container
+from split_my_check.use_cases.create_expense_group import CreateExpenseGroupUseCase, CreateExpenseGroupInput
 from split_my_check.use_cases.upsert_tg_user import (
     UpsertTgUserUseCase,
     UpsertTgUserInput,
@@ -71,8 +72,18 @@ async def handle_chosen_inline_result(q: types.ChosenInlineResult) -> None:
         return
     logger.info(f"Expense group id: {expense_group_id}")
 
-    uc: UpsertTgUserUseCase = get_container().resolve(UpsertTgUserUseCase)
-    await uc.execute(UpsertTgUserInput(tg_user=q.from_user))
+    container = get_container()
+    uc: UpsertTgUserUseCase = container.resolve(UpsertTgUserUseCase)
+    output = await uc.execute(UpsertTgUserInput(tg_user=q.from_user))
+
+    uc: CreateExpenseGroupUseCase = container.resolve(CreateExpenseGroupUseCase)
+    await uc.execute(
+        CreateExpenseGroupInput(
+            id=expense_group_id,
+            name=q.query,
+            owner_id=output.user_id,
+        )
+    )
 
 
 # echo incoming message to bot
