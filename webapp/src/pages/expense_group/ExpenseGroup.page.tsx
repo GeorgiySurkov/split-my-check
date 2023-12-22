@@ -1,16 +1,21 @@
 import React from "react";
-import WebApp from "@twa-dev/sdk";
+
+import {MainButton} from "@twa-dev/sdk/react";
+import {useNavigate} from "react-router-dom";
+
 import {ExpenseList} from "src/entities/expense";
 import {useSafeTgInitData} from "src/shared/lib/safe_tg_init_data";
-import {MainButton} from "@twa-dev/sdk/react";
 
 
 export const ExpenseGroupPage: React.FC = () => {
+  const navigate = useNavigate();
+
   const initData = useSafeTgInitData();
 
   const onMainButtonCLick = React.useCallback(() => {
-    WebApp.showAlert("Вот это да");
-  }, []);
+    // WebApp.showAlert("Вот это да");
+    navigate("/edit");
+  }, [navigate]);
 
   const prettyTgData = JSON.stringify(initData, null, 2);
 
