@@ -48,17 +48,27 @@ class UpsertTgUserUseCase:
                 is_premium=inp.tg_user.is_premium,
                 user_id=user.id,
             )
+            on_conflict_set = {
+                TelegramUser.first_name: insert_stmt.excluded.first_name,
+                TelegramUser.last_name: insert_stmt.excluded.last_name,
+                TelegramUser.is_bot: insert_stmt.excluded.is_bot,
+                TelegramUser.is_premium: insert_stmt.excluded.is_premium,
+            }
+            if inp.tg_user.username is not None:
+                on_conflict_set[TelegramUser.username] = insert_stmt.excluded.username
+            if inp.tg_user.language_code is not None:
+                on_conflict_set[
+                    TelegramUser.language_code
+                ] = insert_stmt.excluded.language_code
+            if inp.tg_user.is_premium is not None:
+                on_conflict_set[
+                    TelegramUser.is_premium
+                ] = insert_stmt.excluded.is_premium
+
             await self.db.session.execute(
                 insert_stmt.on_conflict_do_update(
-                    index_elements=[TelegramUser.tg_id, TelegramUser.user_id],
-                    set_={
-                        TelegramUser.username: insert_stmt.excluded.username,
-                        TelegramUser.first_name: insert_stmt.excluded.first_name,
-                        TelegramUser.last_name: insert_stmt.excluded.last_name,
-                        TelegramUser.language_code: insert_stmt.excluded.language_code,
-                        TelegramUser.is_bot: insert_stmt.excluded.is_bot,
-                        TelegramUser.is_premium: insert_stmt.excluded.is_premium,
-                    },
+                    index_elements=[TelegramUser.tg_id],
+                    set_=on_conflict_set,
                 )
             )
 

@@ -34,12 +34,12 @@ class TelegramUser(Base):
     tg_id: Mapped[int] = mapped_column(BigInteger, unique=True, index=True)
     username: Mapped[str] = mapped_column(String(32), index=True)
     first_name: Mapped[str] = mapped_column(String(64))
-    last_name: Mapped[str] = mapped_column(String(64))
-    language_code: Mapped[str] = mapped_column(
+    last_name: Mapped[str | None] = mapped_column(String(64))
+    language_code: Mapped[str | None] = mapped_column(
         String(35)
     )  # https://stackoverflow.com/a/17863380
     is_bot: Mapped[bool]
-    is_premium: Mapped[bool]
+    is_premium: Mapped[bool | None]
 
     created_at: Mapped[datetime] = mapped_column(default=now)
     updated_at: Mapped[datetime] = mapped_column(default=now, onupdate=now)
@@ -55,7 +55,7 @@ class ExpenseGroup(Base):
     )
 
     owner_id: Mapped[UUID] = mapped_column(ForeignKey(User.id))
-    name: Mapped[str | None] = mapped_column(String(64), default=None)
+    name: Mapped[str | None] = mapped_column(String(256), default=None)
 
     created_at: Mapped[datetime] = mapped_column(default=now)
     updated_at: Mapped[datetime] = mapped_column(default=now, onupdate=now)

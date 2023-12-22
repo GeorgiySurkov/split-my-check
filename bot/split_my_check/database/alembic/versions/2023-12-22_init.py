@@ -1,8 +1,8 @@
 """init
 
-Revision ID: 9dbf85ae9797
+Revision ID: d613247e8e29
 Revises: 
-Create Date: 2023-12-14 01:58:05.662179
+Create Date: 2023-12-22 03:27:53.287491
 
 """
 from typing import Sequence, Union
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "9dbf85ae9797"
+revision: str = "d613247e8e29"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -29,7 +29,7 @@ def upgrade() -> None:
         "expense_group",
         sa.Column("id", sa.String(length=20), nullable=False),
         sa.Column("owner_id", sa.Uuid(), nullable=False),
-        sa.Column("name", sa.String(length=64), nullable=True),
+        sa.Column("name", sa.String(length=256), nullable=True),
         sa.Column("created_at", sa.TIMESTAMP(timezone=True), nullable=False),
         sa.Column("updated_at", sa.TIMESTAMP(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(
@@ -45,10 +45,10 @@ def upgrade() -> None:
         sa.Column("tg_id", sa.BigInteger(), nullable=False),
         sa.Column("username", sa.String(length=32), nullable=False),
         sa.Column("first_name", sa.String(length=64), nullable=False),
-        sa.Column("last_name", sa.String(length=64), nullable=False),
-        sa.Column("language_code", sa.String(length=35), nullable=False),
+        sa.Column("last_name", sa.String(length=64), nullable=True),
+        sa.Column("language_code", sa.String(length=35), nullable=True),
         sa.Column("is_bot", sa.Boolean(), nullable=False),
-        sa.Column("is_premium", sa.Boolean(), nullable=False),
+        sa.Column("is_premium", sa.Boolean(), nullable=True),
         sa.Column("created_at", sa.TIMESTAMP(timezone=True), nullable=False),
         sa.Column("updated_at", sa.TIMESTAMP(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(

@@ -11,22 +11,32 @@ from .use_cases.upsert_tg_user.use_case import UpsertTgUserUseCase
 logger = logging.getLogger(__name__)
 
 
+_container: Container | None = None
+
+
+def get_container() -> Container:
+    if _container is None:
+        raise RuntimeError("DI container is not wired")
+    return _container
+
+
 @asynccontextmanager
 async def wire_container(settings: Settings) -> Container:
+    global _container
     logger.info("Initializing DI container")
-    container = Container()
+    _container = Container()
 
-    container.register(Settings, instance=settings)
-    container.register(DatabaseResource, scope=Scope.singleton)
+    _container.register(Settings, instance=settings)
+    _container.register(DatabaseResource, scope=Scope.singleton)
 
     # Use cases
-    container.register(CreateExpenseGroupUseCase, scope=Scope.singleton)
-    container.register(UpsertTgUserUseCase, scope=Scope.singleton)
+    _container.register(CreateExpenseGroupUseCase, scope=Scope.singleton)
+    _container.register(UpsertTgUserUseCase, scope=Scope.singleton)
 
     logger.info("DI container is initialized")
     try:
-        yield container
+        yield _container
     finally:
         logger.info("Closing DI container")
-        await container.resolve(DatabaseResource).close()
+        await _container.resolve(DatabaseResource).close()
         logger.info("DI container is closed")

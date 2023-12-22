@@ -2,6 +2,11 @@ import logging
 
 from aiogram import Router, types
 
+from split_my_check.di import get_container
+from split_my_check.use_cases.upsert_tg_user import (
+    UpsertTgUserUseCase,
+    UpsertTgUserInput,
+)
 from split_my_check.utils import (
     generate_expense_group_id,
     prefix_expense_group_id,
@@ -16,8 +21,12 @@ logger = logging.getLogger(__name__)
 
 @bot_router.inline_query()
 async def handle_inline_query(q: types.InlineQuery) -> None:
-    logger.info(f"Incoming inline request: {q.id=}, {q.query=}")
-    if len(q.query) > 64:
+    logger.info(
+        f"Incoming inline request: "
+        f"{q.id=}, {q.query=}, {q.from_user.username=}, {q.from_user.id=}, {q.from_user.language_code=}"
+    )
+
+    if len(q.query) > 256:
         # Too long query
         await q.answer(
             results=[],
@@ -36,8 +45,9 @@ async def handle_inline_query(q: types.InlineQuery) -> None:
         results=[
             types.InlineQueryResultArticle(
                 id=prefixed_expense_group_id,
-                title="Создать трикаунт",
-                description=f'Будет отправлено сообщение с ссылкой на новую группу расходов "{q.query}"',
+                title="Создать группу расходов",
+                description=f'Будет отправлено сообщение с ссылкой на новую группу расходов "{q.query}". '
+                f"Название группы можно будет изменить.",
                 input_message_content=types.InputTextMessageContent(
                     message_text=f'А вот и новая группа расходов "{q.query}": https://t.me/splitmycheckbot/app?startapp={prefixed_expense_group_id}',
                 ),
@@ -50,12 +60,19 @@ async def handle_inline_query(q: types.InlineQuery) -> None:
 
 @bot_router.chosen_inline_result()
 async def handle_chosen_inline_result(q: types.ChosenInlineResult) -> None:
-    logger.info(f"Incoming chosen inline result: {q.result_id=}, {q.query=}")
+    logger.info(
+        f"Incoming chosen inline result: "
+        f"{q.result_id=}, {q.query=}, {q.from_user.username=}, {q.from_user.id=}, {q.from_user.language_code=}"
+    )
+
     expense_group_id = parse_prefixed_expense_group_id(q.result_id)
     if expense_group_id is None:
         logger.warning(f"Invalid expense group id: {q.result_id}")
         return
     logger.info(f"Expense group id: {expense_group_id}")
+
+    uc: UpsertTgUserUseCase = get_container().resolve(UpsertTgUserUseCase)
+    await uc.execute(UpsertTgUserInput(tg_user=q.from_user))
 
 
 # echo incoming message to bot
