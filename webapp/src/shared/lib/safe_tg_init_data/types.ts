@@ -1,3 +1,3 @@
-import {InitDataUnsafe} from "@vkruglikov/react-telegram-web-app";
+import {WebAppInitData} from "@twa-dev/types";
 
-export type SafeTgInitData = InitDataUnsafe; // lol
+export type SafeTgInitData = WebAppInitData; // lol

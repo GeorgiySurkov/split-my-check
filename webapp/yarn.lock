@@ -434,6 +434,18 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
+"@twa-dev/sdk@6.9.2":
+  version "6.9.2"
+  resolved "https://registry.yarnpkg.com/@twa-dev/sdk/-/sdk-6.9.2.tgz#1c5a7569db954763bc191509c9d53ba2953a8b2e"
+  integrity sha512-xLqqtJfRtFyvM8arG8eoAtdY2GTdVzDdl64M3blHheY2OqON5QTG+WYUs5EZ+gPFXwxDxRCYTDbOJv1gycJqdA==
+  dependencies:
+    "@twa-dev/types" "^6.9.0"
+
+"@twa-dev/types@6.9.0", "@twa-dev/types@^6.9.0":
+  version "6.9.0"
+  resolved "https://registry.yarnpkg.com/@twa-dev/types/-/types-6.9.0.tgz#5f978e63dcb8ec507ae2b035774ff568c5ebb69a"
+  integrity sha512-hBkIuJgVtkLAPPhKsNfgyBpgS+15spzUScy5jgpfPJPqXPaaUVDTaWHbeEUU+lUgHmryeQjWyz+UjS7987Pyaw==
+
 "@types/babel__core@^7.20.2":
   version "7.20.2"
   resolved "https://registry.yarnpkg.com/@types/babel__core/-/babel__core-7.20.2.tgz#215db4f4a35d710256579784a548907237728756"
@@ -603,11 +615,6 @@
     "@babel/plugin-transform-react-jsx-source" "^7.22.5"
     "@types/babel__core" "^7.20.2"
     react-refresh "^0.14.0"
-
-"@vkruglikov/react-telegram-web-app@2.1.4":
-  version "2.1.4"
-  resolved "https://registry.yarnpkg.com/@vkruglikov/react-telegram-web-app/-/react-telegram-web-app-2.1.4.tgz#400e3425bb4862b3b6b61d78ad7a49a694bebf30"
-  integrity sha512-qiMQdpwcLhFy6FaAQ7vWlRlF0QFMDH9xA/Tp8vQFk9N5FjRW1JaeUYfF19RejFCieAPbO9LWwGjbxeRxQRYA6Q==
 
 "@xobotyi/scrollbar-width@^1.9.5":
   version "1.9.5"

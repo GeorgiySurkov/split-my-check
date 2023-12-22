@@ -11,13 +11,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@vkruglikov/react-telegram-web-app": "2.1.4",
+    "@twa-dev/sdk": "6.9.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-use": "17.4.2",
     "swr": "2.2.4"
   },
   "devDependencies": {
+    "@twa-dev/types": "6.9.0",
     "@types/react": "18.2.24",
     "@types/react-dom": "18.2.8",
     "@typescript-eslint/eslint-plugin": "6.7.4",

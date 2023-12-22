@@ -1,16 +1,15 @@
 import React from "react";
 
-import {useInitData} from "@vkruglikov/react-telegram-web-app";
+import WebApp from "@twa-dev/sdk";
 import useSWR from "swr";
 
 import {SafeTgInitDataContext} from "./context";
 import type {SafeTgInitData} from "./types";
 
 export const SafeTgInitDataProvider: React.FC<{ children?: React.ReactNode }> = ({children}) => {
-    const [, initData] = useInitData();
 
     const {isLoading, data: safeInitData, error} = useSWR<SafeTgInitData, Error>(
-        `${import.meta.env.VITE_API_BASE_URL}/validate_init_data?${initData}`,
+        `${import.meta.env.VITE_API_BASE_URL}/validate_init_data?${WebApp.initData}`,
         async (url: string) => {
             const response = await fetch(url);
             if (!response.ok) throw new Error("Failed to fetch safe init data");
