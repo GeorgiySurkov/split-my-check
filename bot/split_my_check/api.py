@@ -6,12 +6,12 @@ from aiohttp_pydantic.oas.typing import r200
 from pydantic import ValidationError
 
 from split_my_check.state import StateKey
-from .tg.validate import validate_init_data
-from .use_cases.get_expense_group.use_case import (
+from split_my_check.use_cases.expense_group.get_expense_group.use_case import (
     GetExpenseGroupUseCase,
     GetExpenseGroupOutput,
     GetExpenseGroupInput,
 )
+from .tg.validate import validate_init_data
 
 logger = logging.getLogger(__name__)
 

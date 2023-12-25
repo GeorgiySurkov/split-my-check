@@ -3,7 +3,10 @@ import logging
 from aiogram import Router, types
 
 from split_my_check.di import get_container
-from split_my_check.use_cases.create_expense_group import CreateExpenseGroupUseCase, CreateExpenseGroupInput
+from split_my_check.use_cases.expense_group.create_expense_group import (
+    CreateExpenseGroupUseCase,
+    CreateExpenseGroupInput,
+)
 from split_my_check.use_cases.upsert_tg_user import (
     UpsertTgUserUseCase,
     UpsertTgUserInput,

@@ -3,10 +3,14 @@ from contextlib import asynccontextmanager
 
 from punq import Container, Scope
 
+from split_my_check.use_cases.expense_group.create_expense_group import (
+    CreateExpenseGroupUseCase,
+)
+from split_my_check.use_cases.expense_group.get_expense_group.use_case import (
+    GetExpenseGroupUseCase,
+)
 from .database.resource import DatabaseResource
 from .settings import Settings
-from .use_cases.create_expense_group.use_case import CreateExpenseGroupUseCase
-from .use_cases.get_expense_group.use_case import GetExpenseGroupUseCase
 from .use_cases.upsert_tg_user.use_case import UpsertTgUserUseCase
 
 logger = logging.getLogger(__name__)

@@ -11,7 +11,7 @@ from split_my_check.database.orm import (
 from split_my_check.database.resource import DatabaseResource
 from split_my_check.database.utils import auto_transaction
 from split_my_check.schema import ExpenseGroupID, TgUser
-from ..exc import ExpenseGroupNotFound, UserNotFound
+from split_my_check.use_cases.exc import ExpenseGroupNotFound, UserNotFound
 
 
 class GetExpenseGroupInput(BaseModel):
