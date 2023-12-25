@@ -33,8 +33,8 @@ class DetailedExpenseGroupView(PydanticView):
             return web.json_response(text=e.json(), status=400)
 
         container = self.request.config_dict[StateKey.container]
-        uc = container.resolve(GetExpenseGroupUseCase)
+        uc: GetExpenseGroupUseCase = container.resolve(GetExpenseGroupUseCase)
 
-        output = await uc.execute(inp)
+        output = await uc.execute(inp, username)
 
         return web.json_response(text=output.model_dump_json())
