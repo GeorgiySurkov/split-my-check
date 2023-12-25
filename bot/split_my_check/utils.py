@@ -1,10 +1,11 @@
-import re
 from contextlib import contextmanager
 from contextvars import ContextVar
 from datetime import datetime, timezone
 from typing import TypeVar, ContextManager
 
 from nanoid import generate
+
+from .schema import EXPENSE_GROUP_ID_LEN, PREFIXED_EXPENSE_GROUP_ID_PATTERN_COMPILED
 
 T = TypeVar("T")
 
@@ -22,16 +23,13 @@ def now() -> datetime:
     return datetime.now(tz=timezone.utc)
 
 
-PREFIXED_EXPENSE_GROUP_ID_PATTERN = re.compile(r"^gr([0-9A-Za-z_-]{20})$")
-
-
 def generate_expense_group_id() -> str:
     alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz-"
-    return generate(alphabet, size=20)
+    return generate(alphabet, size=EXPENSE_GROUP_ID_LEN)
 
 
 def parse_prefixed_expense_group_id(expense_group_id: str) -> str | None:
-    match = PREFIXED_EXPENSE_GROUP_ID_PATTERN.match(expense_group_id)
+    match = PREFIXED_EXPENSE_GROUP_ID_PATTERN_COMPILED.match(expense_group_id)
     if match is None:
         return None
     return match.group(1)

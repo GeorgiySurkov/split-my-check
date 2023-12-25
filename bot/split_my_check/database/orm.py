@@ -5,6 +5,7 @@ from uuid import uuid4, UUID
 from sqlalchemy import TIMESTAMP, BigInteger, String, ForeignKey, SmallInteger
 from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped
 
+from split_my_check.schema import EXPENSE_GROUP_ID_LEN
 from split_my_check.utils import now, generate_expense_group_id
 
 uuidpk = t.Annotated[UUID, mapped_column(primary_key=True, default=uuid4)]
@@ -49,7 +50,7 @@ class ExpenseGroup(Base):
     __tablename__ = "expense_group"
 
     id: Mapped[str] = mapped_column(
-        String(20),
+        String(EXPENSE_GROUP_ID_LEN),
         primary_key=True,
         default=generate_expense_group_id,
     )

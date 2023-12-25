@@ -6,10 +6,11 @@ from sqlalchemy import insert
 
 from split_my_check.database.orm import ExpenseGroup
 from split_my_check.database.resource import DatabaseResource
+from split_my_check.schema import EXPENSE_GROUP_ID_LEN
 
 
 class CreateExpenseGroupInput(BaseModel):
-    id: str = Field(..., max_length=20)
+    id: str = Field(..., max_length=EXPENSE_GROUP_ID_LEN)
     name: str = Field(..., max_length=64)
     owner_id: UUID
 
