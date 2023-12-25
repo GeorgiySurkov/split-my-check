@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 @web.middleware
 async def web_db_context_middleware(request: web.Request, handler) -> web.Response:
-    db = request.app[StateKey.container].resolve(DatabaseResource)
+    db = request.config_dict[StateKey.container].resolve(DatabaseResource)
     async with db.context():
         return await handler(request)
 
@@ -58,8 +58,11 @@ def create_app() -> web.Application:
     app = web.Application()
     app.cleanup_ctx.append(di_cleanup)
 
-    app.add_routes(api_router)
-    oas.setup(app, url_prefix="/docs")
+    api_app = web.Application(middlewares=[web_db_context_middleware])
+    api_app.add_routes(api_router)
+    oas.setup(api_app, url_prefix="/docs")
+
+    app.add_subapp("/api", api_app)
 
     # aiogram stuff
     dp = Dispatcher()
@@ -92,7 +95,8 @@ def create_app() -> web.Application:
 
         # Configure CORS on all routes.
         for route in list(app.router.routes()):
-            cors.add(route)
+            if route.method != "*":  # FIXME: cors for PydanticView
+                cors.add(route)
 
     # And finally start webserver
     logger.info(

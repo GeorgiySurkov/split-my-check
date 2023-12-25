@@ -6,6 +6,7 @@ from punq import Container, Scope
 from .database.resource import DatabaseResource
 from .settings import Settings
 from .use_cases.create_expense_group.use_case import CreateExpenseGroupUseCase
+from .use_cases.get_expense_group.use_case import GetExpenseGroupUseCase
 from .use_cases.upsert_tg_user.use_case import UpsertTgUserUseCase
 
 logger = logging.getLogger(__name__)
@@ -32,6 +33,7 @@ async def wire_container(settings: Settings) -> Container:
     # Use cases
     _container.register(CreateExpenseGroupUseCase, scope=Scope.singleton)
     _container.register(UpsertTgUserUseCase, scope=Scope.singleton)
+    _container.register(GetExpenseGroupUseCase, scope=Scope.singleton)
 
     logger.info("DI container is initialized")
     try:
