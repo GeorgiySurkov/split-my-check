@@ -17,7 +17,7 @@ class Base(DeclarativeBase):
     }
 
 
-class User(Base):
+class UserORM(Base):
     __tablename__ = "user"
 
     id: Mapped[uuidpk]
@@ -25,11 +25,11 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(default=now)
 
 
-class TelegramUser(Base):
+class TelegramUserORM(Base):
     __tablename__ = "telegram_user"
 
     id: Mapped[uuidpk]
-    user_id: Mapped[UUID] = mapped_column(ForeignKey(User.id), unique=True)
+    user_id: Mapped[UUID] = mapped_column(ForeignKey(UserORM.id), unique=True)
 
     # Data from telegram
     tg_id: Mapped[int] = mapped_column(BigInteger, unique=True, index=True)
@@ -46,7 +46,7 @@ class TelegramUser(Base):
     updated_at: Mapped[datetime] = mapped_column(default=now, onupdate=now)
 
 
-class ExpenseGroup(Base):
+class ExpenseGroupORM(Base):
     __tablename__ = "expense_group"
 
     id: Mapped[str] = mapped_column(
@@ -55,32 +55,32 @@ class ExpenseGroup(Base):
         default=generate_expense_group_id,
     )
 
-    owner_id: Mapped[UUID] = mapped_column(ForeignKey(User.id))
+    owner_id: Mapped[UUID] = mapped_column(ForeignKey(UserORM.id))
     name: Mapped[str | None] = mapped_column(String(256), default=None)
 
     created_at: Mapped[datetime] = mapped_column(default=now)
     updated_at: Mapped[datetime] = mapped_column(default=now, onupdate=now)
 
 
-class ExpenseGroupParticipant(Base):
+class ExpenseGroupParticipantORM(Base):
     __tablename__ = "expense_group_participant"
 
     expense_group_id: Mapped[str] = mapped_column(
-        ForeignKey(ExpenseGroup.id),
+        ForeignKey(ExpenseGroupORM.id),
         primary_key=True,
     )
-    user_id: Mapped[UUID] = mapped_column(ForeignKey(User.id), primary_key=True)
+    user_id: Mapped[UUID] = mapped_column(ForeignKey(UserORM.id), primary_key=True)
 
     created_at: Mapped[datetime] = mapped_column(default=now)
 
 
-class Expense(Base):
+class ExpenseORM(Base):
     __tablename__ = "expense"
 
     id: Mapped[uuidpk]
 
-    expense_group_id: Mapped[str] = mapped_column(ForeignKey(ExpenseGroup.id))
-    payer_id: Mapped[UUID] = mapped_column(ForeignKey(User.id))
+    expense_group_id: Mapped[str] = mapped_column(ForeignKey(ExpenseGroupORM.id))
+    payer_id: Mapped[UUID] = mapped_column(ForeignKey(UserORM.id))
     name: Mapped[str] = mapped_column(String(128))
     amount: Mapped[int] = mapped_column(BigInteger)
 
@@ -88,11 +88,11 @@ class Expense(Base):
     updated_at: Mapped[datetime] = mapped_column(default=now, onupdate=now)
 
 
-class ExpenseParticipant(Base):
+class ExpenseParticipantORM(Base):
     __tablename__ = "expense_participant"
 
-    expense_id: Mapped[UUID] = mapped_column(ForeignKey(Expense.id), primary_key=True)
-    user_id: Mapped[UUID] = mapped_column(ForeignKey(User.id), primary_key=True)
+    expense_id: Mapped[UUID] = mapped_column(ForeignKey(ExpenseORM.id), primary_key=True)
+    user_id: Mapped[UUID] = mapped_column(ForeignKey(UserORM.id), primary_key=True)
 
     fraction: Mapped[int | None] = mapped_column(SmallInteger)
     explicit_part: Mapped[int | None] = mapped_column(BigInteger)

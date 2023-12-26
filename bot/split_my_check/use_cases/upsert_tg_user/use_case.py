@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 
-from split_my_check.database.orm import TelegramUser, User
+from split_my_check.database.orm import TelegramUserORM, UserORM
 from split_my_check.database.resource import DatabaseResource
 
 
@@ -27,18 +27,18 @@ class UpsertTgUserUseCase:
         async with self.db.session.begin():
             # check if internal user exists and create if not in one statement
             res = await self.db.session.scalars(
-                select(User)
-                .join(TelegramUser)
-                .where(TelegramUser.tg_id == inp.tg_user.id)
+                select(UserORM)
+                .join(TelegramUserORM)
+                .where(TelegramUserORM.tg_id == inp.tg_user.id)
             )
             user = res.first()
             if user is None:
                 res = await self.db.session.scalars(
-                    insert(User).values().returning(User)
+                    insert(UserORM).values().returning(UserORM)
                 )
                 user = res.first()
 
-            insert_stmt = insert(TelegramUser).values(
+            insert_stmt = insert(TelegramUserORM).values(
                 tg_id=inp.tg_user.id,
                 username=inp.tg_user.username,
                 first_name=inp.tg_user.first_name,
@@ -49,25 +49,27 @@ class UpsertTgUserUseCase:
                 user_id=user.id,
             )
             on_conflict_set = {
-                TelegramUser.first_name: insert_stmt.excluded.first_name,
-                TelegramUser.last_name: insert_stmt.excluded.last_name,
-                TelegramUser.is_bot: insert_stmt.excluded.is_bot,
-                TelegramUser.is_premium: insert_stmt.excluded.is_premium,
+                TelegramUserORM.first_name: insert_stmt.excluded.first_name,
+                TelegramUserORM.last_name: insert_stmt.excluded.last_name,
+                TelegramUserORM.is_bot: insert_stmt.excluded.is_bot,
+                TelegramUserORM.is_premium: insert_stmt.excluded.is_premium,
             }
             if inp.tg_user.username is not None:
-                on_conflict_set[TelegramUser.username] = insert_stmt.excluded.username
+                on_conflict_set[
+                    TelegramUserORM.username
+                ] = insert_stmt.excluded.username
             if inp.tg_user.language_code is not None:
                 on_conflict_set[
-                    TelegramUser.language_code
+                    TelegramUserORM.language_code
                 ] = insert_stmt.excluded.language_code
             if inp.tg_user.is_premium is not None:
                 on_conflict_set[
-                    TelegramUser.is_premium
+                    TelegramUserORM.is_premium
                 ] = insert_stmt.excluded.is_premium
 
             await self.db.session.execute(
                 insert_stmt.on_conflict_do_update(
-                    index_elements=[TelegramUser.tg_id],
+                    index_elements=[TelegramUserORM.tg_id],
                     set_=on_conflict_set,
                 )
             )

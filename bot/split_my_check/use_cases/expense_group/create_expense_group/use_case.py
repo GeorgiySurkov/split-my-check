@@ -4,7 +4,7 @@ from uuid import UUID
 from pydantic import BaseModel, Field, ConfigDict
 from sqlalchemy import insert
 
-from split_my_check.database.orm import ExpenseGroup
+from split_my_check.database.orm import ExpenseGroupORM
 from split_my_check.database.resource import DatabaseResource
 from split_my_check.schema import EXPENSE_GROUP_ID_LEN
 
@@ -32,7 +32,9 @@ class CreateExpenseGroupUseCase:
     async def execute(self, inp: CreateExpenseGroupInput) -> CreateExpenseGroupOutput:
         async with self.db.session.begin():
             res = await self.db.session.scalars(
-                insert(ExpenseGroup).values(inp.model_dump()).returning(ExpenseGroup)
+                insert(ExpenseGroupORM)
+                .values(inp.model_dump())
+                .returning(ExpenseGroupORM)
             )
             expense_group = res.first()
         return CreateExpenseGroupOutput.model_validate(expense_group)

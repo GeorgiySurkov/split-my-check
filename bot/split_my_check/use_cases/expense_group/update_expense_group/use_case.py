@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy import select, update
 
-from split_my_check.database.orm import ExpenseGroup, TelegramUser, User
+from split_my_check.database.orm import ExpenseGroupORM, TelegramUserORM, UserORM
 from split_my_check.database.resource import DatabaseResource
 from split_my_check.database.utils import auto_transaction
 from split_my_check.schema import TgUser, ExpenseGroupID
@@ -32,19 +32,19 @@ class UpdateExpenseGroupUseCase:
         group_id: ExpenseGroupID,
     ) -> UpdateExpenseGroupOutput:
         res = await self.db.session.execute(
-            select(ExpenseGroup, TelegramUser)
-            .join(User, ExpenseGroup.owner_id == User.id)
-            .join(TelegramUser, User.id == TelegramUser.user_id)
-            .where(ExpenseGroup.id == group_id)
+            select(ExpenseGroupORM, TelegramUserORM)
+            .join(UserORM, ExpenseGroupORM.owner_id == UserORM.id)
+            .join(TelegramUserORM, UserORM.id == TelegramUserORM.user_id)
+            .where(ExpenseGroupORM.id == group_id)
         )
         row = res.first()
         if row is None:
             raise ExpenseGroupNotFound()
 
         res = await self.db.session.scalars(
-            select(User)
-            .join(TelegramUser, User.id == TelegramUser.user_id)
-            .where(TelegramUser.username == username)
+            select(UserORM)
+            .join(TelegramUserORM, UserORM.id == TelegramUserORM.user_id)
+            .where(TelegramUserORM.username == username)
         )
         user = res.first()
         if user is None:
@@ -55,10 +55,10 @@ class UpdateExpenseGroupUseCase:
             raise NoPermissionToUpdateExpenseGroup()
 
         res = await self.db.session.scalars(
-            update(ExpenseGroup)
-            .where(ExpenseGroup.id == group_id)
+            update(ExpenseGroupORM)
+            .where(ExpenseGroupORM.id == group_id)
             .values(name=inp.name)
-            .returning(ExpenseGroup)
+            .returning(ExpenseGroupORM)
         )
         expense_group = res.first()
 

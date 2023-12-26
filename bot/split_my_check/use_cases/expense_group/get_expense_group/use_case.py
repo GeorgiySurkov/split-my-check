@@ -3,10 +3,10 @@ from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 
 from split_my_check.database.orm import (
-    ExpenseGroup,
-    TelegramUser,
-    User,
-    ExpenseGroupParticipant,
+    ExpenseGroupORM,
+    TelegramUserORM,
+    UserORM,
+    ExpenseGroupParticipantORM,
 )
 from split_my_check.database.resource import DatabaseResource
 from split_my_check.database.utils import auto_transaction
@@ -33,26 +33,26 @@ class GetExpenseGroupUseCase:
         username: str,
     ) -> GetExpenseGroupOutput:
         res = await self.db.session.execute(
-            select(ExpenseGroup, TelegramUser)
-            .join(User, ExpenseGroup.owner_id == User.id)
-            .join(TelegramUser, User.id == TelegramUser.user_id)
-            .where(ExpenseGroup.id == group_id)
+            select(ExpenseGroupORM, TelegramUserORM)
+            .join(UserORM, ExpenseGroupORM.owner_id == UserORM.id)
+            .join(TelegramUserORM, UserORM.id == TelegramUserORM.user_id)
+            .where(ExpenseGroupORM.id == group_id)
         )
         row = res.first()
         if row is None:
             raise ExpenseGroupNotFound()
 
         res = await self.db.session.scalars(
-            select(User)
-            .join(TelegramUser, User.id == TelegramUser.user_id)
-            .where(TelegramUser.username == username)
+            select(UserORM)
+            .join(TelegramUserORM, UserORM.id == TelegramUserORM.user_id)
+            .where(TelegramUserORM.username == username)
         )
         user = res.first()
         if user is None:
             raise UserNotFound()
 
         await self.db.session.execute(
-            insert(ExpenseGroupParticipant)
+            insert(ExpenseGroupParticipantORM)
             .values(
                 expense_group_id=group_id,
                 user_id=user.id,
