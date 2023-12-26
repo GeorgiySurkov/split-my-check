@@ -28,6 +28,7 @@ class GetExpenseGroupUseCase:
     @auto_transaction()
     async def execute(
         self,
+        *,
         group_id: ExpenseGroupID,
         username: str,
     ) -> GetExpenseGroupOutput:

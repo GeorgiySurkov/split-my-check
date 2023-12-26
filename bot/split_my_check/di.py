@@ -9,9 +9,12 @@ from split_my_check.use_cases.expense_group.create_expense_group import (
 from split_my_check.use_cases.expense_group.get_expense_group.use_case import (
     GetExpenseGroupUseCase,
 )
+from split_my_check.use_cases.expense_group.update_expense_group.use_case import (
+    UpdateExpenseGroupUseCase,
+)
+from split_my_check.use_cases.upsert_tg_user.use_case import UpsertTgUserUseCase
 from .database.resource import DatabaseResource
 from .settings import Settings
-from .use_cases.upsert_tg_user.use_case import UpsertTgUserUseCase
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +41,7 @@ async def wire_container(settings: Settings) -> Container:
     _container.register(CreateExpenseGroupUseCase, scope=Scope.singleton)
     _container.register(UpsertTgUserUseCase, scope=Scope.singleton)
     _container.register(GetExpenseGroupUseCase, scope=Scope.singleton)
+    _container.register(UpdateExpenseGroupUseCase, scope=Scope.singleton)
 
     logger.info("DI container is initialized")
     try:
