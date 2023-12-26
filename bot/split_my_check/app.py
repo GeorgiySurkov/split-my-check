@@ -10,7 +10,7 @@ from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_applicati
 from aiohttp import web
 from aiohttp_pydantic import oas
 
-from split_my_check.api import api_router
+from split_my_check.api.routes import api_router
 from split_my_check.database.resource import DatabaseResource
 from split_my_check.di import get_container, wire_container
 from split_my_check.settings import settings
