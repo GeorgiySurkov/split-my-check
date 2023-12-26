@@ -14,10 +14,6 @@ from split_my_check.schema import ExpenseGroupID, TgUser
 from split_my_check.use_cases.exc import ExpenseGroupNotFound, UserNotFound
 
 
-class GetExpenseGroupInput(BaseModel):
-    group_id: ExpenseGroupID
-
-
 class GetExpenseGroupOutput(BaseModel):
     name: str
     owner: TgUser
@@ -32,14 +28,14 @@ class GetExpenseGroupUseCase:
     @auto_transaction()
     async def execute(
         self,
-        inp: GetExpenseGroupInput,
+        group_id: ExpenseGroupID,
         username: str,
     ) -> GetExpenseGroupOutput:
         res = await self.db.session.execute(
             select(ExpenseGroup, TelegramUser)
             .join(User, ExpenseGroup.owner_id == User.id)
             .join(TelegramUser, User.id == TelegramUser.user_id)
-            .where(ExpenseGroup.id == inp.group_id)
+            .where(ExpenseGroup.id == group_id)
         )
         row = res.first()
         if row is None:
@@ -57,7 +53,7 @@ class GetExpenseGroupUseCase:
         await self.db.session.execute(
             insert(ExpenseGroupParticipant)
             .values(
-                expense_group_id=inp.group_id,
+                expense_group_id=group_id,
                 user_id=user.id,
             )
             .on_conflict_do_nothing()
