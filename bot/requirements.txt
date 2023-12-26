@@ -94,12 +94,17 @@ aiohttp==3.9.1 \
     #   aiogram
     #   aiohttp-cors
     #   aiohttp-pydantic
+    #   aiohttp-security
 aiohttp-cors==0.7.0 \
     --hash=sha256:0451ba59fdf6909d0e2cd21e4c0a43752bc0703d33fc78ae94d9d9321710193e \
     --hash=sha256:4d39c6d7100fd9764ed1caf8cebf0eb01bf5e3f24e2e073fda6234bc48b19f5d
     # via -r requirements.in
 aiohttp-pydantic==2.0.0 \
     --hash=sha256:166c121512156c210b08ff993716e9d7ed74c8dad7a7e7cb07dfacf9b3c309ca
+    # via -r requirements.in
+aiohttp-security==0.5.0 \
+    --hash=sha256:50cb724d310e1d0289798bb98ae852c3b75b77e8f51ce5159c57b7261d0638bd \
+    --hash=sha256:791ecbb4bbdb95b3a2033bda345231628ea42903b2d33b6a3bf8737ed68c6072
     # via -r requirements.in
 aiosignal==1.3.1 \
     --hash=sha256:54cd96e15e1649b75d6c87526a6ff0b6c1b0dd3459f43d9ca11d48c339b68cfc \
