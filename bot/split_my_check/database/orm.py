@@ -33,14 +33,17 @@ class TelegramUserORM(Base):
 
     # Data from telegram
     tg_id: Mapped[int] = mapped_column(BigInteger, unique=True, index=True)
-    username: Mapped[str] = mapped_column(String(32), index=True)
+    username: Mapped[str | None] = mapped_column(String(32), index=True)
     first_name: Mapped[str] = mapped_column(String(64))
     last_name: Mapped[str | None] = mapped_column(String(64))
     language_code: Mapped[str | None] = mapped_column(
         String(35)
     )  # https://stackoverflow.com/a/17863380
-    is_bot: Mapped[bool]
+    is_bot: Mapped[bool | None]
     is_premium: Mapped[bool | None]
+    added_to_attachment_menu: Mapped[bool | None]
+    allows_write_to_pm: Mapped[bool | None]
+    photo_url: Mapped[str | None] = mapped_column(String(256))
 
     created_at: Mapped[datetime] = mapped_column(default=now)
     updated_at: Mapped[datetime] = mapped_column(default=now, onupdate=now)
@@ -83,6 +86,7 @@ class ExpenseORM(Base):
     payer_id: Mapped[UUID] = mapped_column(ForeignKey(UserORM.id))
     name: Mapped[str] = mapped_column(String(128))
     amount: Mapped[int] = mapped_column(BigInteger)
+    payed_at: Mapped[datetime] = mapped_column(default=now)
 
     created_at: Mapped[datetime] = mapped_column(default=now)
     updated_at: Mapped[datetime] = mapped_column(default=now, onupdate=now)
@@ -91,7 +95,9 @@ class ExpenseORM(Base):
 class ExpenseParticipantORM(Base):
     __tablename__ = "expense_participant"
 
-    expense_id: Mapped[UUID] = mapped_column(ForeignKey(ExpenseORM.id), primary_key=True)
+    expense_id: Mapped[UUID] = mapped_column(
+        ForeignKey(ExpenseORM.id), primary_key=True
+    )
     user_id: Mapped[UUID] = mapped_column(ForeignKey(UserORM.id), primary_key=True)
 
     fraction: Mapped[int | None] = mapped_column(SmallInteger)

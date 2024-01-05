@@ -1,8 +1,8 @@
 """init
 
-Revision ID: d613247e8e29
+Revision ID: 210c512e33bd
 Revises: 
-Create Date: 2023-12-22 03:27:53.287491
+Create Date: 2024-01-05 23:44:52.034774
 
 """
 from typing import Sequence, Union
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "d613247e8e29"
+revision: str = "210c512e33bd"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -43,12 +43,15 @@ def upgrade() -> None:
         sa.Column("id", sa.Uuid(), nullable=False),
         sa.Column("user_id", sa.Uuid(), nullable=False),
         sa.Column("tg_id", sa.BigInteger(), nullable=False),
-        sa.Column("username", sa.String(length=32), nullable=False),
+        sa.Column("username", sa.String(length=32), nullable=True),
         sa.Column("first_name", sa.String(length=64), nullable=False),
         sa.Column("last_name", sa.String(length=64), nullable=True),
         sa.Column("language_code", sa.String(length=35), nullable=True),
-        sa.Column("is_bot", sa.Boolean(), nullable=False),
+        sa.Column("is_bot", sa.Boolean(), nullable=True),
         sa.Column("is_premium", sa.Boolean(), nullable=True),
+        sa.Column("added_to_attachment_menu", sa.Boolean(), nullable=True),
+        sa.Column("allows_write_to_pm", sa.Boolean(), nullable=True),
+        sa.Column("photo_url", sa.String(length=256), nullable=True),
         sa.Column("created_at", sa.TIMESTAMP(timezone=True), nullable=False),
         sa.Column("updated_at", sa.TIMESTAMP(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(
@@ -71,6 +74,7 @@ def upgrade() -> None:
         sa.Column("payer_id", sa.Uuid(), nullable=False),
         sa.Column("name", sa.String(length=128), nullable=False),
         sa.Column("amount", sa.BigInteger(), nullable=False),
+        sa.Column("payed_at", sa.TIMESTAMP(timezone=True), nullable=False),
         sa.Column("created_at", sa.TIMESTAMP(timezone=True), nullable=False),
         sa.Column("updated_at", sa.TIMESTAMP(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(
