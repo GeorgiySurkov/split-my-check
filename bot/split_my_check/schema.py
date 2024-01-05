@@ -16,9 +16,11 @@ EXPENSE_GROUP_ID_PATTERN_COMPILED = re.compile(EXPENSE_GROUP_ID_PATTERN)
 ExpenseGroupID = constr(pattern=EXPENSE_GROUP_ID_PATTERN)
 
 
-class TgUser(BaseModel):
+class PublicTgUser(BaseModel):
+    id: int
     username: str
     first_name: str
     last_name: str
+    photo_url: str | None = None
 
     model_config = ConfigDict(from_attributes=True)

@@ -15,6 +15,11 @@ from split_my_check.use_cases.expense_group.update_expense_group.use_case import
     UpdateExpenseGroupOutput,
     UpdateExpenseGroupUseCase,
 )
+from split_my_check.use_cases.upsert_tg_user import (
+    UpsertTgUserUseCase,
+    UpsertTgUserInput,
+)
+from .auth import IdentityPolicy, Identity
 from .utils import parse_expense_group_id
 
 logger = logging.getLogger(__name__)
@@ -25,8 +30,22 @@ api_router = web.RouteTableDef()
 
 @api_router.get("/validate_init_data")
 async def validate_init_data_handler(req: web.Request) -> web.Response:
+    container = req.config_dict[StateKey.container]
+    identity_policy: IdentityPolicy = container.resolve(IdentityPolicy)
+    uc: UpsertTgUserUseCase = container.resolve(UpsertTgUserUseCase)
+
     init_data = validate_init_data(req.query)
-    return web.json_response(text=init_data.model_dump_json())
+
+    uc_output = await uc.execute(
+        UpsertTgUserInput.model_validate(init_data.user.model_dump(exclude_unset=True))
+    )
+
+    resp = web.json_response(text=init_data.model_dump_json())
+    await identity_policy.remember(
+        req, resp, Identity(u=uc_output.user_id, tg=uc_output.tg_user.id)
+    )
+
+    return resp
 
 
 @api_router.view("/expense_group/{group_id}")

@@ -4,7 +4,7 @@ from sqlalchemy import select, update
 from split_my_check.database.orm import ExpenseGroupORM, TelegramUserORM, UserORM
 from split_my_check.database.resource import DatabaseResource
 from split_my_check.database.utils import auto_transaction
-from split_my_check.schema import TgUser, ExpenseGroupID
+from split_my_check.schema import PublicTgUser, ExpenseGroupID
 from ...exc import ExpenseGroupNotFound, UserNotFound, NoPermissionToUpdateExpenseGroup
 
 
@@ -14,7 +14,7 @@ class UpdateExpenseGroupInput(BaseModel):
 
 class UpdateExpenseGroupOutput(BaseModel):
     name: str
-    owner: TgUser
+    owner: PublicTgUser
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -63,5 +63,12 @@ class UpdateExpenseGroupUseCase:
         expense_group = res.first()
 
         return UpdateExpenseGroupOutput(
-            name=expense_group.name, owner=TgUser.model_validate(row.TelegramUser)
+            name=expense_group.name,
+            owner=PublicTgUser(
+                id=row.TelegramUser.tg_id,
+                username=row.TelegramUser.username,
+                first_name=row.TelegramUser.first_name,
+                last_name=row.TelegramUser.last_name,
+                photo_url=row.TelegramUser.photo_url,
+            ),
         )

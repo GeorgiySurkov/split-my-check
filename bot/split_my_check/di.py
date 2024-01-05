@@ -13,6 +13,7 @@ from split_my_check.use_cases.expense_group.update_expense_group.use_case import
     UpdateExpenseGroupUseCase,
 )
 from split_my_check.use_cases.upsert_tg_user.use_case import UpsertTgUserUseCase
+from .api.auth import IdentityPolicy
 from .database.resource import DatabaseResource
 from .settings import Settings
 
@@ -36,6 +37,9 @@ async def wire_container(settings: Settings) -> Container:
 
     _container.register(Settings, instance=settings)
     _container.register(DatabaseResource, scope=Scope.singleton)
+
+    # auth
+    _container.register(IdentityPolicy, scope=Scope.singleton)
 
     # Use cases
     _container.register(CreateExpenseGroupUseCase, scope=Scope.singleton)

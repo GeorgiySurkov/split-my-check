@@ -77,7 +77,9 @@ async def handle_chosen_inline_result(q: types.ChosenInlineResult) -> None:
 
     container = get_container()
     uc: UpsertTgUserUseCase = container.resolve(UpsertTgUserUseCase)
-    output = await uc.execute(UpsertTgUserInput(tg_user=q.from_user))
+    output = await uc.execute(
+        UpsertTgUserInput.model_validate(q.from_user.model_dump(exclude_unset=True))
+    )
 
     uc: CreateExpenseGroupUseCase = container.resolve(CreateExpenseGroupUseCase)
     await uc.execute(

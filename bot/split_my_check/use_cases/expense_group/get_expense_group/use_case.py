@@ -10,13 +10,13 @@ from split_my_check.database.orm import (
 )
 from split_my_check.database.resource import DatabaseResource
 from split_my_check.database.utils import auto_transaction
-from split_my_check.schema import ExpenseGroupID, TgUser
+from split_my_check.schema import ExpenseGroupID, PublicTgUser
 from split_my_check.use_cases.exc import ExpenseGroupNotFound, UserNotFound
 
 
 class GetExpenseGroupOutput(BaseModel):
     name: str
-    owner: TgUser
+    owner: PublicTgUser
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -61,5 +61,12 @@ class GetExpenseGroupUseCase:
         )
 
         return GetExpenseGroupOutput(
-            name=row.ExpenseGroup.name, owner=TgUser.model_validate(row.TelegramUser)
+            name=row.ExpenseGroup.name,
+            owner=PublicTgUser(
+                id=row.TelegramUser.tg_id,
+                username=row.TelegramUser.username,
+                first_name=row.TelegramUser.first_name,
+                last_name=row.TelegramUser.last_name,
+                photo_url=row.TelegramUser.photo_url,
+            ),
         )
